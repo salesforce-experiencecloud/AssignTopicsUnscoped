@@ -1,3 +1,4 @@
 <design:component label="Assign Topics Unscoped">
-	
+	<design:attribute name="networkId" datasource="apex://communitiesPicklist" label="Default Community"
+                description="Choose a network to default to."/>
 </design:component>
