@@ -4,7 +4,7 @@
     <aura:attribute name="recordTopicSearchInfo" type="Object"/>
     <aura:attribute name="readyToDisplay" type="Boolean" default="false"/>
     <aura:attribute name="showSpinner" type="Boolean" default="false"/>
-    <aura:attribute name="networkId" type="String" default=""/>
+    <aura:attribute name="networkId" type="String" default="" access="global"/>
     <aura:attribute name="defaultNetworkId" type="String" default=""/>
     <aura:attribute name="searchTerm" type="String" default=""/>
     <aura:attribute name="featuredTopicIconName" type="String" default="custom:custom1"/>
