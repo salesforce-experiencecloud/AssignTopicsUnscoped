@@ -1,0 +1,31 @@
+.THIS .spinnerContainer{
+    position: relative;
+    display: inline-block;
+    margin-left: auto;
+    width: 100%;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.THIS li.slds-item:hover {
+    background-color: rgba(21, 137, 238, 0.2);
+}
+
+.THIS li.slds-item {
+    cursor: pointer;
+}
+
+.THIS .createTopicIcon svg {
+    width: 1rem;
+    height: 1rem;
+    line-height: 1;
+    margin-bottom: 0.2rem;
+}
+
+.THIS .font-size--x-small {
+    font-size: .5rem;
+}
+
+.THIS .no-icon .slds-pill__icon~.slds-pill__action, .THIS .no-icon .slds-pill__icon_container~.slds-pill__action {
+    padding-left: 0.25rem;
+}

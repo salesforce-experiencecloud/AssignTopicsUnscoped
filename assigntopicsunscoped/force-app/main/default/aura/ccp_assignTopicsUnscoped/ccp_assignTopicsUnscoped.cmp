@@ -1,0 +1,112 @@
+<aura:component controller="ccp_assignTopicsUnscopedController" implements="flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+    
+    <aura:attribute name="recordTopicInfo" type="Object"/>
+    <aura:attribute name="recordTopicSearchInfo" type="Object"/>
+    <aura:attribute name="readyToDisplay" type="Boolean" default="false"/>
+    <aura:attribute name="showSpinner" type="Boolean" default="false"/>
+    <aura:attribute name="networkId" type="String" default=""/>
+    <aura:attribute name="searchTerm" type="String" default=""/>
+    <aura:attribute name="featuredTopicIconName" type="String" default="custom:custom1"/>
+    <aura:attribute name="navigationalTopicIconName" type="String" default="custom:custom40"/>
+    <aura:attribute name="contentTopicIconName" type="String" default="custom:custom49"/>
+    
+    <aura:dependency resource="force:showToast" type="EVENT" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <aura:handler name="change" value="{!v.searchTerm}" action="{!c.handleSearchTermChange}"/>
+    
+    
+    
+    <div class="slds slds-card">
+        <div class="slds-align_absolute-center spinnerContainer">
+            <lightning:spinner aura:id="spinner" variant="brand" size="medium" class="{!if(and(v.readyToDisplay,!v.showSpinner),'slds-hide','')}" alternativeText="Loading..."/>
+        </div>
+        
+        <div class="slds-card__header">
+            <h2 class="slds-card__header-title slds-text-title_bold">
+                <lightning:icon iconName="standard:topic2" alternativeText="Topics" size="small" class="slds-m-right--x-small"/>
+                Internal &amp; External Topic Assignments
+            </h2>
+        </div>
+        
+        <aura:if isTrue="{!v.readyToDisplay}">
+            <div class="slds-m-horizontal--small">
+                <lightning:select aura:id="scope" name="scope" label="Select internal org or choose external Community:" value="{!v.networkId}" onchange="{! c.handleScopeChange }">
+                    <option value="" selected="{!empty(v.networkId)}">Internal Org</option>
+                    <aura:iteration items="{!v.recordTopicInfo.networkList}" var="network">
+                        <option value="{!network.Id}" selected="{!v.networkId == network.Id}">{!'Community - ' + network.Name}</option>
+                    </aura:iteration>
+                </lightning:select>
+            </div>
+            
+            <div onkeyup="{! c.handleKeyUp }" class="slds-m-horizontal--small">
+                <lightning:input
+                                 aura:id="enter-search"
+                                 name="enter-search"
+                                 label="Search"
+                                 type="search"
+                                 value="{!v.searchTerm}" 
+                                 onfocus="{!c.handleSearchTermChange}"
+                                 onblur="{!c.handleSearchOnBlur}"
+                                 />
+                <aura:if isTrue="{!greaterthan(v.recordTopicSearchInfo.topicList.length,0)}">
+                    <div class="slds-card_boundary slds-m-around--small slds-p-around--small">
+                        <ul class="slds-has-dividers_around-space">
+                            <aura:iteration items="{!v.recordTopicSearchInfo.topicList}" var="topic">
+                                <li class="slds-item" id="{!if(empty(topic.Id),'CREATE',topic.Id)}" onmousedown="{!c.handleAddTopic}">
+                                    <span id="{!if(empty(topic.Id),'CREATE',topic.Id)}" class="{!if(empty(topic.Description,'slds-hide',''))}" onmousedown="{!c.handleAddTopic}">
+                                        <lightning:icon iconName="{!if(topic.Description == 'Featured',v.featuredTopicIconName, 
+                                                                  if(topic.Description == 'Navigational',v.navigationalTopicIconName,
+                                                                  if(topic.Description == 'Content',v.contentTopicIconName
+                                                                  )))}"  
+                                                        title="{!topic.Name + if(!empty(topic.Description), ' - ' + topic.Description,'')}"
+                                                        size="small"
+                                                        alternativeText="{!topic.Description}" class="{!if(empty(topic.Description),'slds-hide','slds-m-right--x-small')}"/>
+                                    </span>
+                                    <span id="{!if(empty(topic.Id),'CREATE',topic.Id)}" onmousedown="{!c.handleAddTopic}">
+                                        {!topic.Name}
+                                    </span>
+                                    <span id="{!if(empty(topic.Id),'CREATE',topic.Id)}" class="font-size--x-small" onmousedown="{!c.handleAddTopic}">
+                                        {!if(!empty(topic.Description), ' - ','')}
+                                    </span>
+                                    <span id="{!if(empty(topic.Id),'CREATE',topic.Id)}" class="font-size--x-small" onmousedown="{!c.handleAddTopic}">
+                                        {!if(!empty(topic.Description), topic.Description,'')}
+                                    </span>
+                                    <span id="{!if(empty(topic.Id),'CREATE',topic.Id)}" class="{!if(empty(topic.Id),'slds-float_right','slds-hide')}" onmousedown="{!c.handleAddTopic}">
+                                        Create Topic
+                                        <lightning:icon iconName="utility:record_create" alternativeText="Create Topic" size="small" title="Create Topic"
+                                                        class="createTopicIcon slds-m-right--x-small"/>
+                                    </span>
+                                </li>
+                            </aura:iteration>
+                        </ul>
+                    </div>
+                </aura:if>
+            </div>
+            
+            <div class="slds-m-top--x-small slds-m-bottom--medium slds-m-horizontal--small">
+                <aura:iteration items="{!v.recordTopicInfo.topicAssignmentList}" var="ta">
+                    <span id="{!ta.Id}">
+                        <lightning:pill name="{!ta.Id}" label="{!ta.Topic.Name}" 
+                                        title="{!ta.Topic.Name + if(!empty(ta.Topic.Description), ' - ' + ta.Topic.Description,'')}"
+                                        onremove="{! c.handleRemoveTopic }" class="{!'slds-m-right--x-small' + if(empty(ta.Topic.Description),' no-icon','')}">
+                            
+                            <aura:set attribute="media">
+                                <lightning:icon iconName="{!if(ta.Topic.Description == 'Featured',v.featuredTopicIconName, 
+                                                          if(ta.Topic.Description == 'Navigational',v.navigationalTopicIconName,
+                                                          if(ta.Topic.Description == 'Content',v.contentTopicIconName
+                                                          )))}"  
+                                                title="{!ta.Topic.Name + if(!empty(ta.Topic.Description), ' - ' + ta.Topic.Description,'')}"
+                                                alternativeText="{!ta.Topic.Description}" class="{!if(empty(ta.Topic.Description),'slds-hide','')}"/>
+                            </aura:set>
+                            
+                        </lightning:pill>
+                        
+                    </span>
+                    
+                </aura:iteration>
+            </div>
+        </aura:if>
+    </div>
+    
+</aura:component>
