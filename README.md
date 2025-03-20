@@ -1,10 +1,10 @@
 # Assign Topics Unscoped
 
-**As of:** Spring'20
+**As of:** Spring'25
 
 **Authored By:** George Abboud
 
-**Last Updated:** 1/14/2020
+**Last Updated:** 3/20/2025
 
 * * *
 
@@ -54,6 +54,14 @@ Can be used on any lightning record detail page, as long as that object has topi
 
 
 ## Release Log:
+
+### Version 1.2 - managed
+
+Installation URL: https://login.salesforce.com/packaging/installPackage.apexp?p0=04t1U000007Y1Zz
+
+* Updated Apex classes to most recent API version for compatibility with ICU Format enablement in orgs
+
+
 
 ### Version 1.1 - managed
 
